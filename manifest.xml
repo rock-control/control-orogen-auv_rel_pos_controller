@@ -1,0 +1,12 @@
+<package>
+  <description brief="Relative position controller for autonomous underwater vehicles">
+  </description>
+  <author>Alexander Duda/Alexander.Duda@dfki.de</author>
+  <license></license>
+  <depend package="base/types"/>
+  <depend package="control/motor_controller"/>
+  <versioncontrol type="git" url="" />
+  <export>
+    <cpp cflags="" lflags="" />
+  </export>
+</package>
