@@ -1,0 +1,26 @@
+name 'auv_rel_pos_controller'
+
+using_library 'motor_controller'
+import_types_from 'base'
+import_types_from 'PID.hpp'
+
+task_context 'Task' do
+    input_port('position_command',"base::AUVPositionCommand")
+    output_port('motion_command',"base::AUVMotionCommand")
+
+    property("fixed_z","double", -9999).
+        doc("if this porperty is set to a value > -9999[m] the controler always sets z to fixed_z")
+
+    property("rel_z","bool",false).
+        doc("if set to false z is interpreated as absolute depth")
+    property("rel_heading","bool",true).
+        doc("if set to false the heading is interpreated as absolute heading")
+
+    property("controller_x","motor_controller::PIDSettings")
+    property("controller_y","motor_controller::PIDSettings")
+    property("controller_z","motor_controller::PIDSettings")
+    property("controller_heading","motor_controller::PIDSettings")
+
+    property("timeout","double",1).
+        doc("after n seconds without an update the motion is set to zero")
+end
