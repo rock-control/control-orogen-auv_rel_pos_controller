@@ -167,6 +167,9 @@ void Task::updateHook()
     // set heading
     if (_rel_heading.get())
     {
+        double heading = base::getYaw(bodyState.orientation);
+        motion_command.heading = heading + positionCommand.heading;
+        constrainAngle(motion_command.heading);
     }
     else
     {
