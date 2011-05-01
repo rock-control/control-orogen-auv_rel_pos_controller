@@ -6,6 +6,7 @@ import_types_from 'PID.hpp'
 
 task_context 'Task' do
     input_port('position_command',"base::AUVPositionCommand")
+    input_port('position_sample',"base::samples::RigidBodyState")
     output_port('motion_command',"base::AUVMotionCommand")
 
     property("fixed_z","double", -9999).
@@ -18,9 +19,12 @@ task_context 'Task' do
 
     property("controller_x","motor_controller::PIDSettings")
     property("controller_y","motor_controller::PIDSettings")
-    property("controller_z","motor_controller::PIDSettings")
-    property("controller_heading","motor_controller::PIDSettings")
 
     property("timeout","double",1).
         doc("after n seconds without an update the motion is set to zero")
+end
+
+deployment 'auv_rel_pos_controller' do
+  task('auv_rel_pos_controller', 'Task').
+    periodic(0.01)
 end
