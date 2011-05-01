@@ -69,17 +69,6 @@ bool Task::configureHook()
     xPID->setPIDSettings(_controller_x.get());
     yPID->setPIDSettings(_controller_y.get());
     
-    //tests:
-    std::cout << _controller_x.get().YMax <<std::endl;
-    base::AUVPositionCommand posCommand;
-    posCommand.heading = 2*M_PI;
-    posCommand.x = 12;
-    posCommand.y = -8;
-    posCommand.z = 2;
-    constrainValues(posCommand);
-    std::cout << posCommand.x << ", " << posCommand.y << ", " << posCommand.z << ", " << posCommand.heading << std::endl;
-    //
-    
     bodyState.invalidate();
     taskPeriod = 0;
     timeout = 0;
