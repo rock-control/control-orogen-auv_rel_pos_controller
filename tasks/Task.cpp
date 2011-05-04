@@ -4,8 +4,8 @@
 
 using namespace auv_rel_pos_controller;
 
-Task::Task(std::string const& name, TaskCore::TaskState initial_state)
-    : TaskBase(name, initial_state)
+Task::Task(std::string const& name)
+    : TaskBase(name)
 {
     
 }
@@ -63,12 +63,6 @@ void Task::constrainValues(base::AUVPositionCommand& posCommand)
 
 bool Task::configureHook()
 {
-    xPID = new motor_controller::PID();
-    yPID = new motor_controller::PID();
-    
-    xPID->setPIDSettings(_controller_x.get());
-    yPID->setPIDSettings(_controller_y.get());
-    
     bodyState.invalidate();
     taskPeriod = 0;
     timeout = 0;
@@ -78,6 +72,9 @@ bool Task::configureHook()
 }
 bool Task::startHook()
 {
+    xPID.setPIDSettings(_controller_x.get());
+    yPID.setPIDSettings(_controller_y.get());
+
     // check if input ports are connected
     if (!_position_command.connected())
     {
@@ -145,8 +142,8 @@ void Task::updateHook()
     
     base::AUVMotionCommand motion_command;
     // set x,y speed
-    motion_command.x_speed = xPID->update(0, positionCommand.x);
-    motion_command.y_speed = yPID->update(0, positionCommand.y);
+    motion_command.x_speed = xPID.update(0, positionCommand.x);
+    motion_command.y_speed = yPID.update(0, positionCommand.y);
     
     // set depth
     if (_fixed_z.get() > -9999)
@@ -191,7 +188,5 @@ void Task::stopHook()
 }
 void Task::cleanupHook()
 {
-    delete xPID;
-    delete yPID;
 }
 

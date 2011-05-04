@@ -20,8 +20,8 @@ namespace auv_rel_pos_controller {
         void constrainValue(double& value, const double& contraint);
         void constrainAngle(double& angle);
         
-        motor_controller::PID* xPID;
-        motor_controller::PID* yPID;
+        motor_controller::PID xPID;
+        motor_controller::PID yPID;
         base::AUVPositionCommand positionCommand;
         base::samples::RigidBodyState bodyState;
         double taskPeriod;
@@ -29,7 +29,7 @@ namespace auv_rel_pos_controller {
         bool validBodyState;
 
     public:
-        Task(std::string const& name = "auv_rel_pos_controller::Task", TaskCore::TaskState initial_state = Stopped);
+        Task(std::string const& name = "auv_rel_pos_controller::Task");
 
 	~Task();
 
