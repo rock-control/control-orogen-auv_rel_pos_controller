@@ -5,6 +5,8 @@ import_types_from 'base'
 import_types_from 'PID.hpp'
 
 task_context 'Task' do
+    needs_configuration
+
     input_port('position_command',"base::AUVPositionCommand")
     input_port('position_sample',"base::samples::RigidBodyState")
     output_port('motion_command',"base::AUVMotionCommand")
