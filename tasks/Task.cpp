@@ -142,8 +142,14 @@ void Task::updateHook()
     
     base::AUVMotionCommand motion_command;
     // set x,y speed
-    motion_command.x_speed = xPID.update(0, positionCommand.x);
-    motion_command.y_speed = yPID.update(0, positionCommand.y);
+    if (positionCommand.x == 0)
+        motion_command.x_speed = 0;
+    else
+        motion_command.x_speed = xPID.update(0, positionCommand.x);
+    if (positionCommand.y == 0)
+        motion_command.y_speed = 0;
+    else
+        motion_command.y_speed = yPID.update(0, positionCommand.y);
     
     // set depth
     if (_fixed_z.get() > -9999)
