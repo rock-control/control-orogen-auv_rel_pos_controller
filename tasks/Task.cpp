@@ -67,6 +67,8 @@ bool Task::configureHook()
     taskPeriod = 0;
     timeout = 0;
     validBodyState = false;
+    xPID.reset();
+    yPID.reset();
     
     return true;
 }
