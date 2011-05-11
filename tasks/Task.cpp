@@ -107,6 +107,21 @@ void Task::updateHook()
         }
     }
     
+    if(_position_sample.readNewest(bodyState) != RTT::NoData)
+    {
+        validBodyState = true;
+    }
+    else
+    {
+        if(!validBodyState && (_rel_z.get() || _rel_heading.get()))
+        {
+            std::cerr << TaskContext::getName() << ": " 
+                        << "Waiting for a valid RigidBodyState to set relative values"
+                            << " for z or heading." << std::endl;
+            return;
+        }
+    }
+    
     if(_position_command.readNewest(positionCommand) != RTT::NoData) 
     {
         timeout = 0;
@@ -123,21 +138,6 @@ void Task::updateHook()
             std::cerr << TaskContext::getName() << ": "
                         << "Switching to task state RUNTIME_ERROR now!" << std::endl;
             error();
-            return;
-        }
-    }
-    
-    if(_position_sample.readNewest(bodyState) != RTT::NoData)
-    {
-        validBodyState = true;
-    }
-    else
-    {
-        if(!validBodyState && (_rel_z.get() || _rel_heading.get()))
-        {
-            std::cerr << TaskContext::getName() << ": " 
-                        << "Waiting for a valid RigidBodyState to set relative values"
-                            << " for z or heading." << std::endl;
             return;
         }
     }
