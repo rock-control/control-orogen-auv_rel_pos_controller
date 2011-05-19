@@ -147,11 +147,11 @@ void Task::updateHook()
     if (positionCommand.x == 0)
         motion_command.x_speed = 0;
     else
-        motion_command.x_speed = xPID.update(0, positionCommand.x);
+        motion_command.x_speed = xPID.update(-positionCommand.x,0);
     if (positionCommand.y == 0)
         motion_command.y_speed = 0;
     else
-        motion_command.y_speed = yPID.update(0, positionCommand.y);
+        motion_command.y_speed = yPID.update(-positionCommand.y,0);
     
     // set depth
     if (_fixed_z.get() > -9999)
