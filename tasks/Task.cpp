@@ -41,10 +41,11 @@ void Task::constrainValues(base::AUVPositionCommand& posCommand)
     }
     else 
     {
-        if (posCommand.z > 0)
+    //this does not work with altitude
+   /*     if (posCommand.z > 0)
             posCommand.z = 0;
         if (_fixed_z.get() > 0)
-            _fixed_z.set(0);
+            _fixed_z.set(0);*/
     }
     
     if(_rel_heading.get())
