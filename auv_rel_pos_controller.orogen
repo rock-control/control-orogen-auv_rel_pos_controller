@@ -24,6 +24,9 @@ task_context 'Task' do
 
     property("timeout","double",1).
         doc("after n seconds without an update the motion is set to zero")
+
+
+    error_states :TIMEOUT, :NOT_CONNECTED
 end
 
 deployment 'auv_rel_pos_controller' do

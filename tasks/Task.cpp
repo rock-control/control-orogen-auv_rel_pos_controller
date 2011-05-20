@@ -77,24 +77,27 @@ bool Task::startHook()
     xPID.setPIDSettings(_controller_x.get());
     yPID.setPIDSettings(_controller_y.get());
 
-    // check if input ports are connected
-    if (!_position_command.connected())
-    {
-        std::cerr << TaskContext::getName() << ": " 
-                    << "Input port 'position_command' is not connected." << std::endl;
-        return false;
-    }
-    else if (!_position_sample.connected())
-    {
-        std::cerr << TaskContext::getName() << ": "
-                    << "Input port 'position_sample' is not connected." << std::endl;
-        return false;
-    }
+
     
     return true;
 }
 void Task::updateHook()
 {
+    
+    // check if input ports are connected
+    if (!_position_command.connected())
+    {
+        std::cerr << TaskContext::getName() << ": " 
+                    << "Input port 'position_command' is not connected." << std::endl;
+        return error(NOT_CONNECTED);
+    }
+    else if (!_position_sample.connected())
+    {
+        std::cerr << TaskContext::getName() << ": "
+                    << "Input port 'position_sample' is not connected." << std::endl;
+        return error(NOT_CONNECTED);
+    }
+
     // get triggering interval of this task context
     if (taskPeriod <= 0) 
     {
@@ -137,8 +140,8 @@ void Task::updateHook()
                             << _timeout.get() << " seconds." << std::endl;
             std::cerr << TaskContext::getName() << ": "
                         << "Switching to task state RUNTIME_ERROR now!" << std::endl;
-            error();
-            return;
+
+            return error(TIMEOUT);
         }
     }
     
