@@ -5,14 +5,16 @@ import_types_from 'base'
 import_types_from 'PID.hpp'
 
 task_context 'Task' do
-    needs_configuration
-
     input_port('position_command',"base::AUVPositionCommand")
     input_port('position_sample',"base::samples::RigidBodyState")
     output_port('motion_command',"base::AUVMotionCommand")
 
-    property("fixed_z","double", -9999).
-        doc("if this porperty is set to a value > -9999[m] the controler always sets z to fixed_z")
+    property("timeout","double",30).
+        doc("The task is going into fatal if it was not able to generate a non zero "+
+            "MotionCommand for longer than n secs")
+
+    property("valid_timespan","double",2).
+        doc("Timespan a meassage is considered to be valid.")
 
     property("rel_z","bool",false).
         doc("if set to false z is interpreated as absolute depth")
@@ -22,11 +24,9 @@ task_context 'Task' do
     property("controller_x","motor_controller::PIDSettings")
     property("controller_y","motor_controller::PIDSettings")
 
-    property("timeout","double",1).
-        doc("after n seconds without an update the motion is set to zero")
-
-
-    error_states :TIMEOUT, :NOT_CONNECTED
+    runtime_states :WAITING_FOR_VALID_BODYSTATE, :WAITING_FOR_POSITION_COMMAND 
+    fatal_states :TIMEOUT, :INVALID_POSITION_COMMAND
+    
 end
 
 deployment 'auv_rel_pos_controller' do

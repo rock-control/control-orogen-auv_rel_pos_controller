@@ -5,31 +5,30 @@
 
 #include "auv_rel_pos_controller/TaskBase.hpp"
 #include <PID.hpp>
+#include <base/time.h>
+#include <sstream>
 
 namespace auv_rel_pos_controller {
-    
-    const static double xyConstraint = 10;
-    const static double zConstraint = 3;
-    const static double angleConstraint = M_PI;
-    
     class Task : public TaskBase
     {
 	friend class TaskBase;
     protected:
-        void constrainValues(base::AUVPositionCommand& posCommand);
-        void constrainValue(double& value, const double& contraint);
-        void constrainAngle(double& angle);
+        double constrainAngle(double angle);
         
-        motor_controller::PID xPID;
-        motor_controller::PID yPID;
-        base::AUVPositionCommand positionCommand;
-        base::samples::RigidBodyState bodyState;
-        double taskPeriod;
-        double timeout;
-        bool validBodyState;
+        motor_controller::PID x_pid;
+        motor_controller::PID y_pid;
+        base::AUVPositionCommand position_command;
+        base::samples::RigidBodyState body_state;
+        base::AUVMotionCommand motion_command;
+        base::Time last_position_command_update;
+        base::Time last_position_sample_update;
+        base::Time last_valid_motion_command;
+        base::Time last_log_message;
+        States last_state;
+        double inital_heading;
 
     public:
-        Task(std::string const& name = "auv_rel_pos_controller::Task");
+        Task(std::string const& name = "auv_rel_pos_controller::Task", TaskCore::TaskState initial_state = Stopped);
 
 	~Task();
 
