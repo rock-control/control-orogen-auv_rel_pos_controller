@@ -46,9 +46,11 @@ void Task::updateHook()
     base::Time time = base::Time::now();
 
     //read new body state
-    if(_position_sample.read(body_state)==RTT::NewData)
+    if(_position_sample.read(body_state_temp)==RTT::NewData)
+    {
+        body_state = body_state_temp;
         last_position_sample_update = time;             //we do not want to get confused if
-                                                        //the time of an other computer differs 
+    }                                                   //the time of an other computer differs 
 
     //check for timeout 
     //if the body_state is too old it is no longer valid
@@ -67,40 +69,46 @@ void Task::updateHook()
 
 
     //read new position command
-    if(_position_command.read(position_command) == RTT::NewData) 
+    if(_position_command.read(position_command_temp) == RTT::NewData) 
     {
+        position_command = position_command_temp;
         last_position_command_update = time;
-        if(act_state == RUNNING)
+
+        //special mode if in rel heading mode-- keep inital heading
+        if(std::numeric_limits<double>::infinity() == position_command.heading && 
+                _rel_heading.get())
         {
-            //special mode if in rel heading mode-- keep inital heading
-            if(std::numeric_limits<double>::infinity() == position_command.heading && 
-               _rel_heading.get())
+            //set inital heading
+            if(inital_heading == std::numeric_limits<double>::infinity())
             {
-                //set inital heading
-                if(inital_heading == std::numeric_limits<double>::infinity())
+                position_command.heading = 0;
+                if(body_state.hasValidPosition())
                 {
                     inital_heading = base::getYaw(body_state.orientation);
                     std::cout << "Set inital heading to: " << inital_heading << std::endl;
                 }
-                position_command.heading = constrainAngle(inital_heading-base::getYaw(body_state.orientation));
+                else
+                    std::cout << "Could not set inital heading" << std::endl;
             }
             else
-            {
-                inital_heading = std::numeric_limits<double>::infinity();
-            }
+                position_command.heading = constrainAngle(inital_heading-base::getYaw(body_state.orientation));
+        }
+        else
+        {
+            inital_heading = std::numeric_limits<double>::infinity();
+        }
 
-            //check values and go into fatal if someone
-            //is sending invalid commands
-            if(std::abs(position_command.heading) > M_PI || 
-                    std::numeric_limits<double>::infinity() == position_command.x ||
-                    std::numeric_limits<double>::infinity() == position_command.y ||
-                    std::numeric_limits<double>::infinity() == position_command.z)
-            {
-                std::cerr << "Invalid PositionCommand: " << std::endl;
-                std::cerr << "posx=: " << position_command.x << ", posy=: "<< position_command.y << 
-                             "posy=: " << position_command.y << ", heading=: "<< position_command.heading << std::endl;
-                return fatal(INVALID_POSITION_COMMAND);
-            }
+        //check values and go into fatal if someone
+        //is sending invalid commands
+        if(std::abs(position_command.heading) > M_PI || 
+                std::numeric_limits<double>::infinity() == position_command.x ||
+                std::numeric_limits<double>::infinity() == position_command.y ||
+                std::numeric_limits<double>::infinity() == position_command.z)
+        {
+            std::cerr << "Invalid PositionCommand: " << std::endl;
+            std::cerr << "posx=: " << position_command.x << ", posy=: "<< position_command.y << 
+                "posy=: " << position_command.y << ", heading=: "<< position_command.heading << std::endl;
+            return fatal(INVALID_POSITION_COMMAND);
         }
     }
 
@@ -152,8 +160,8 @@ void Task::updateHook()
         if((time-last_valid_motion_command).toSeconds() > _timeout.get())
         {
             std::cerr << "No valid MotionCommands were generated for " <<
-                         (time-last_valid_motion_command).toSeconds() <<
-                         " seconds." << std::endl;
+                (time-last_valid_motion_command).toSeconds() <<
+                " seconds." << std::endl;
             return fatal(TIMEOUT);
         }
     }
