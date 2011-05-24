@@ -64,7 +64,7 @@ void Task::updateHook()
         }
         body_state.invalidate();
     }
-    if(!body_state.hasValidPosition() || !body_state.hasValidPosition())
+    if(!body_state.hasValidOrientation())
         act_state = WAITING_FOR_VALID_BODYSTATE;
 
 
