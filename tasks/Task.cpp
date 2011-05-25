@@ -21,16 +21,16 @@ bool Task::configureHook()
 bool Task::startHook()
 {
     base::Time time = base::Time::now();
+    last_valid_motion_command = time;
 
     x_pid.reset();
     y_pid.reset();
     x_pid.setPIDSettings(_controller_x.get());
     y_pid.setPIDSettings(_controller_y.get());
+    x_pid.printCoefficients();
+    y_pid.printCoefficients();
     inital_heading = std::numeric_limits<double>::infinity();
     body_state.invalidate();
-    last_valid_motion_command = time;
-    last_position_sample_update = time;
-    last_position_command_update = time;
     last_state = RUNNING;
     return true;
 }
@@ -63,9 +63,10 @@ void Task::updateHook()
                 << (time-last_position_sample_update).toSeconds() << " seconds." << std::endl;
         }
         body_state.invalidate();
-    }
-    if(!body_state.hasValidOrientation())
         act_state = WAITING_FOR_VALID_BODYSTATE;
+    }
+//    if(!body_state.hasValidOrientation())
+//        act_state = WAITING_FOR_VALID_BODYSTATE;
 
 
     //read new position command
@@ -82,7 +83,7 @@ void Task::updateHook()
             if(inital_heading == std::numeric_limits<double>::infinity())
             {
                 position_command.heading = 0;
-                if(body_state.hasValidPosition())
+                if(act_state == RUNNING)
                 {
                     inital_heading = base::getYaw(body_state.orientation);
                     std::cout << "Set inital heading to: " << inital_heading << std::endl;
