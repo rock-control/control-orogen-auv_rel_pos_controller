@@ -25,7 +25,7 @@ task_context 'Task' do
     property("controller_y","motor_controller::PIDSettings")
 
     runtime_states :WAITING_FOR_VALID_BODYSTATE, :WAITING_FOR_POSITION_COMMAND 
-    fatal_states :TIMEOUT, :INVALID_POSITION_COMMAND
+    exception_states :TIMEOUT, :INVALID_POSITION_COMMAND
     
 end
 

@@ -99,7 +99,7 @@ void Task::updateHook()
             inital_heading = std::numeric_limits<double>::infinity();
         }
 
-        //check values and go into fatal if someone
+        //check values and go into exception if someone
         //is sending invalid commands
         if(std::abs(position_command.heading) > M_PI || 
                 std::numeric_limits<double>::infinity() == position_command.x ||
@@ -109,7 +109,7 @@ void Task::updateHook()
             std::cerr << "Invalid PositionCommand: " << std::endl;
             std::cerr << "posx=: " << position_command.x << ", posy=: "<< position_command.y << 
                 "posy=: " << position_command.y << ", heading=: "<< position_command.heading << std::endl;
-            return fatal(INVALID_POSITION_COMMAND);
+            return exception(INVALID_POSITION_COMMAND);
         }
     }
 
@@ -157,13 +157,13 @@ void Task::updateHook()
         motion_command.z = body_state.position.z();
         motion_command.heading = base::getYaw(body_state.orientation);
 
-        //go into fatal after n secs
-        if((time-last_valid_motion_command).toSeconds() > _timeout.get())
+        //go into exception after n secs
+        if((time-last_valid_motion_command).toSeconds() > _timeout.get()&& _timeout.get() > 0)
         {
             std::cerr << "No valid MotionCommands were generated for " <<
                 (time-last_valid_motion_command).toSeconds() <<
                 " seconds." << std::endl;
-            return fatal(TIMEOUT);
+            return exception(TIMEOUT);
         }
     }
 
@@ -178,6 +178,7 @@ void Task::updateHook()
 
 void Task::errorHook()
 {
+
 }
 
 void Task::stopHook()
