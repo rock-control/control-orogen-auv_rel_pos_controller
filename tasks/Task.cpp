@@ -63,12 +63,14 @@ void Task::updateHook()
     {
         if((time-last_log_message).toSeconds()>message_interval) 
         {
-            std::cout << TaskContext::getName() << ": " 
-                << "Receiving no valid RigidBodyState data for "
-                << (time-last_position_sample_update).toSeconds() << " seconds." << std::endl;
+            long seconds = (time-last_position_sample_update).toSeconds();
+            if(seconds > 999999)
+                std::cout << TaskContext::getName() <<": Have not received any RigidBodyState data" << std::endl;
+            else
+                std::cout << TaskContext::getName() << ": " << "Receiving no valid RigidBodyState data for " << seconds  << " seconds." << std::endl;
         }
-        body_state.invalidate();
         act_state = WAITING_FOR_VALID_BODYSTATE;
+        return;         //we have to return here because otherwise we will generate stupid commands 
     }
 //    if(!body_state.hasValidOrientation())
 //        act_state = WAITING_FOR_VALID_BODYSTATE;
