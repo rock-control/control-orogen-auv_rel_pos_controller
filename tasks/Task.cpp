@@ -37,7 +37,12 @@ bool Task::startHook()
 
 double Task::constrainAngle(double angle)
 {
-    return angle -M_PI*((int)(angle/M_PI));
+    angle = fmod(angle,2*M_PI);
+    if(angle > M_PI)
+        angle -= 2*M_PI;
+    if(angle < -M_PI)
+        angle += 2*M_PI;
+    return angle;
 }
 
 void Task::updateHook()
