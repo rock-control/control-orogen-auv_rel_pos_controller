@@ -29,7 +29,7 @@ task_context 'Task' do
     
 end
 
-deployment 'auv_rel_pos_controller' do
+deployment 'auv_rel_pos_controller_test' do
   task('auv_rel_pos_controller', 'Task').
     periodic(0.01)
 end
