@@ -4,7 +4,6 @@
 #define AUV_REL_POS_CONTROLLER_TASK_TASK_HPP
 
 #include "auv_rel_pos_controller/TaskBase.hpp"
-#include <PID.hpp>
 #include <base/time.h>
 #include <sstream>
 

@@ -2,7 +2,7 @@ name 'auv_rel_pos_controller'
 
 using_library 'motor_controller'
 import_types_from 'base'
-import_types_from 'PID.hpp'
+import_types_from 'motor_controller/PID.hpp'
 
 task_context 'Task' do
     input_port('position_command',"base::AUVPositionCommand")
