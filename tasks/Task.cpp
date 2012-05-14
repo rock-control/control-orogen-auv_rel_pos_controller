@@ -69,7 +69,11 @@ void Task::updateHook()
             else
                 std::cout << TaskContext::getName() << ": " << "Receiving no valid RigidBodyState data for " << seconds  << " seconds." << std::endl;
         }
-        act_state = WAITING_FOR_VALID_BODYSTATE;
+        if(last_state != WAITING_FOR_VALID_BODYSTATE)
+        {
+            last_state = WAITING_FOR_VALID_BODYSTATE;
+            state(WAITING_FOR_VALID_BODYSTATE);
+        }
         return;         //we have to return here because otherwise we will generate stupid commands 
     }
 //    if(!body_state.hasValidOrientation())
