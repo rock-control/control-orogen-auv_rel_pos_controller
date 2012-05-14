@@ -26,10 +26,5 @@ task_context 'Task' do
 
     runtime_states :WAITING_FOR_VALID_BODYSTATE, :WAITING_FOR_POSITION_COMMAND 
     exception_states :TIMEOUT, :INVALID_POSITION_COMMAND
-    
-end
-
-deployment 'auv_rel_pos_controller_test' do
-  task('auv_rel_pos_controller', 'Task').
     periodic(0.01)
 end
