@@ -113,8 +113,9 @@ void Task::updateHook()
 
         //check values and go into exception if someone
         //is sending invalid commands
-		if(position_command.heading != std::numeric_limits<double>::infinity()){ //DONT do this on inf SAUC-E HACK REWRITE THIS TASK IS'TS ALL UGLY !!!!!!!, INF IS SPECIAL FOR KEEP LAST HEADING
-				if(std::abs(position_command.heading) > M_PI || 
+		
+//DONT do this on inf SAUC-E HACK REWRITE THIS TASK IS'TS ALL UGLY !!!!!!!, INF IS SPECIAL FOR KEEP LAST HEADING
+				if((std::abs(position_command.heading) > M_PI) && (position_command.heading != std::numeric_limits<double>::infinity()) || 
 						std::numeric_limits<double>::infinity() == position_command.x ||
 						std::numeric_limits<double>::infinity() == position_command.y ||
 						std::numeric_limits<double>::infinity() == position_command.z)
@@ -124,7 +125,6 @@ void Task::updateHook()
 						"posy=: " << position_command.y << ", heading=: "<< position_command.heading << std::endl;
 					return exception(INVALID_POSITION_COMMAND);
 				}
-		}
     }
 
     ////////////check for timeout///////////////
