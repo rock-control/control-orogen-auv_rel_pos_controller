@@ -32,7 +32,8 @@ bool Task::startHook()
     inital_heading = std::numeric_limits<double>::infinity();
     body_state.invalidate();
     last_state = RUNNING;
-    return true;
+    last_valid_heading = 0;
+	return true;
 }
 
 double Task::constrainAngle(double angle)
@@ -112,16 +113,18 @@ void Task::updateHook()
 
         //check values and go into exception if someone
         //is sending invalid commands
-        if(std::abs(position_command.heading) > M_PI || 
-                std::numeric_limits<double>::infinity() == position_command.x ||
-                std::numeric_limits<double>::infinity() == position_command.y ||
-                std::numeric_limits<double>::infinity() == position_command.z)
-        {
-            std::cerr << "Invalid PositionCommand: " << std::endl;
-            std::cerr << "posx=: " << position_command.x << ", posy=: "<< position_command.y << 
-                "posy=: " << position_command.y << ", heading=: "<< position_command.heading << std::endl;
-            return exception(INVALID_POSITION_COMMAND);
-        }
+		if(position_command.heading != std::numeric_limits<double>::infinity()){ //DONT do this on inf SAUC-E HACK REWRITE THIS TASK IS'TS ALL UGLY !!!!!!!, INF IS SPECIAL FOR KEEP LAST HEADING
+				if(std::abs(position_command.heading) > M_PI || 
+						std::numeric_limits<double>::infinity() == position_command.x ||
+						std::numeric_limits<double>::infinity() == position_command.y ||
+						std::numeric_limits<double>::infinity() == position_command.z)
+				{
+					std::cerr << "Invalid PositionCommand: " << std::endl;
+					std::cerr << "posx=: " << position_command.x << ", posy=: "<< position_command.y << 
+						"posy=: " << position_command.y << ", heading=: "<< position_command.heading << std::endl;
+					return exception(INVALID_POSITION_COMMAND);
+				}
+		}
     }
 
     ////////////check for timeout///////////////
@@ -151,11 +154,17 @@ void Task::updateHook()
             motion_command.z = position_command.z;
 
         // set heading
-        if (_rel_heading.get())
-            motion_command.heading = constrainAngle(base::getYaw(body_state.orientation)+position_command.heading);
-        else
+        if (_rel_heading.get()){
+			if(std::numeric_limits<double>::infinity() == position_command.heading){
+				motion_command.heading = last_valid_heading; //DONT TELL THIS JAN IS AN SAUC_E HACK FOR PIPELINE; TO KEEP CURRENT HEADING; REWRITE THIS WHOLE CLASS AND TROW IT AWAY	
+			}else{	
+            	motion_command.heading = constrainAngle(base::getYaw(body_state.orientation)+position_command.heading);
+			}
+        }else{
             motion_command.heading = position_command.heading;
+		}
         last_valid_motion_command = time;
+		last_valid_heading = motion_command.heading;
     }
     else
     {

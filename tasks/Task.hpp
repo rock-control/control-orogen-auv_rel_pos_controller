@@ -27,6 +27,7 @@ namespace auv_rel_pos_controller {
         base::Time last_log_message;
         States last_state;
         double inital_heading;
+        double last_valid_heading;
 
     public:
         Task(std::string const& name = "auv_rel_pos_controller::Task", TaskCore::TaskState initial_state = Stopped);
