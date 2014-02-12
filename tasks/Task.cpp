@@ -49,14 +49,15 @@ double Task::constrainAngle(double angle)
 void Task::updateHook()
 {
     States act_state = RUNNING;
-    base::Time time = base::Time::now();
+    base::Time time;
 
     //read new body state
-    if(_position_sample.read(body_state_temp)==RTT::NewData)
+    if(_position_sample.read(body_state_temp) == RTT::NewData)
     {
         body_state = body_state_temp;
-        last_position_sample_update = time;             //we do not want to get confused if
-    }                                                   //the time of an other computer differs 
+        last_position_sample_update = body_state_temp.time;
+        time = body_state_temp.time;
+    }
 
     //check for timeout 
     //if the body_state is too old it is no longer valid
