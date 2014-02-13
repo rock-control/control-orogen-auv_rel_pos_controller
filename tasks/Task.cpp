@@ -52,7 +52,7 @@ void Task::updateHook()
     base::Time time;
 
     //read new body state
-    if(_position_sample.read(body_state_temp) == RTT::NewData)
+    if(_position_sample.readNewest(body_state_temp) == RTT::NewData)
     {
         body_state = body_state_temp;
         last_position_sample_update = body_state_temp.time;
@@ -83,7 +83,7 @@ void Task::updateHook()
 
 
     //read new position command
-    if(_position_command.read(position_command_temp) == RTT::NewData) 
+    if(_position_command.readNewest(position_command_temp) == RTT::NewData) 
     {
         position_command = position_command_temp;
         last_position_command_update = time;
