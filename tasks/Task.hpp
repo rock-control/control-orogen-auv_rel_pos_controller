@@ -6,6 +6,8 @@
 #include "auv_rel_pos_controller/TaskBase.hpp"
 #include <base/time.h>
 #include <sstream>
+#include <base/commands/AUVPosition.hpp>
+#include <base/commands/AUVMotion.hpp>
 
 namespace auv_rel_pos_controller {
     class Task : public TaskBase
@@ -16,11 +18,11 @@ namespace auv_rel_pos_controller {
         
         motor_controller::PID x_pid;
         motor_controller::PID y_pid;
-        base::AUVPositionCommand position_command;
-        base::AUVPositionCommand position_command_temp;
+        base::commands::AUVPosition position_command;
+        base::commands::AUVPosition position_command_temp;
         base::samples::RigidBodyState body_state;
         base::samples::RigidBodyState body_state_temp;
-        base::AUVMotionCommand motion_command;
+        base::commands::AUVMotion motion_command;
         base::Time last_position_command_update;
         base::Time last_position_sample_update;
         base::Time last_valid_motion_command;
